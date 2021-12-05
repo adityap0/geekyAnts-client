@@ -1,0 +1,16 @@
+{
+  "name": "libapp",
+  "version": "1.0.0",
+  "description": "",
+  "main": "script.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^10.0.0",
+    "require": "^2.4.20",
+    "tailwindcss": "^2.2.19"
+  }
+}
