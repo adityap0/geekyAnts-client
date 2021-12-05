@@ -2,7 +2,7 @@ import { addBook } from "./addBook.js";
 import { loader } from "./loader.js";
 import { addBooks } from "./addBooks.js";
 const env = {
-  BASE_URL: "https://librapp-server.herokuapp.com/api/books",
+  BASE_URL: "https://library-server2.herokuapp.com/api/books",
 };
 
 const getAllbooks = () => {
