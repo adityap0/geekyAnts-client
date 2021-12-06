@@ -32,7 +32,6 @@
           text-white
           cursor-pointer
           rounded
-          items-end
           absolute
           right-0
           -top-12
@@ -41,8 +40,26 @@
       >
         Add Book
       </button>
+
       <h1 class="mt-16">Library Item List</h1>
-      <div class="my-1 bg-gray-200">
+      <div class="my-1 bg-gray-200 relative" id="main-div">
+        <button
+          class="
+            py-2
+            bg-green-500
+            text-white
+            rounded
+            absolute
+            inset-x-1/2
+            w-48
+            -ml-20
+            -top-12
+            hidden
+          "
+          id="notification"
+        >
+          Book Added!
+        </button>
         <ul class="border-b border-black flex justify-between py-2">
           <li class="w-1/12 ml-2">
             <h1>S.No</h1>

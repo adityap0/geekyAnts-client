@@ -7,18 +7,16 @@ const env = {
 
 const getAllbooks = () => {
   document.querySelector("body").append(loader());
-  fetch(env.BASE_URL, {
-    mode: "cors",
-    headers: {},
-  })
+  fetch(env.BASE_URL)
     .then(function (response) {
       if (response.ok) {
         return response.json();
       }
       return Promise.reject(response);
     })
-    .then(function (data) {
-      addBooks(data);
+    .then(function (books) {
+      addBooks(books);
+      addBook(books);
     })
     .catch(function (err) {
       console.warn("Something went wrong.", err);
@@ -27,5 +25,3 @@ const getAllbooks = () => {
 
 //GET all books
 getAllbooks();
-//CREATE a new book
-addBook();

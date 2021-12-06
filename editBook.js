@@ -143,7 +143,12 @@ export function editBook(book) {
       })
       .then(function (data) {
         div.querySelector("#editbookmodal").classList.add("hidden");
-        window.location.reload();
+        document.getElementById("notification").innerText = "Changes Saved!";
+        document.getElementById("notification").classList.remove("hidden");
+        setInterval(() => {
+          document.getElementById("notification").classList.add("hidden");
+          window.location.reload();
+        }, 1000);
       })
       .catch(function (err) {
         div

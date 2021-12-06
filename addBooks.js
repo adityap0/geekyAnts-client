@@ -1,6 +1,5 @@
 import { deleteBook } from "./deleteBook.js";
 import { editBook } from "./editBook.js";
-import { loader } from "./loader.js";
 import { noBooks } from "./noBooks.js";
 export function addBooks(allBooks) {
   document.querySelector("#loader").classList.add("hidden");
@@ -48,6 +47,7 @@ export function addBooks(allBooks) {
     );
     button1.innerText = "Edit";
     button1.addEventListener("click", (e) => {
+      //FOR EDITING THE BOOK
       editBook(book);
     });
     let button2 = document.createElement("button");
@@ -63,6 +63,7 @@ export function addBooks(allBooks) {
     button2.innerText = "Delete";
     button2.addEventListener("click", (e) => {
       e.preventDefault();
+      //FOR DELETING THE BOOK
       deleteBook(book);
     });
     div6.append(button1, button2);

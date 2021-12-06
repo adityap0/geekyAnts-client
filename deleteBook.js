@@ -98,7 +98,18 @@ export function deleteBook(book) {
       })
       .then(function (data) {
         div.querySelector("#deletebookmodal").classList.add("hidden");
-        window.location.reload();
+        document
+          .getElementById("notification")
+          .classList.remove("bg-green-500");
+        document.getElementById("notification").classList.add("bg-red-500");
+        document.getElementById(
+          "notification"
+        ).innerText = `"${book.name}" deleted !`;
+        document.getElementById("notification").classList.remove("hidden");
+        setInterval(() => {
+          document.getElementById("notification").classList.add("hidden");
+          window.location.reload();
+        }, 1000);
       })
       .catch(function (err) {
         div

@@ -1,7 +1,21 @@
 const env = {
   BASE_URL: "https://library-server2.herokuapp.com/api/books",
 };
-export function addBook() {
+export function addBook(allBooks) {
+  if (allBooks.length < 1) {
+    document.getElementById("addbook").classList.remove("right-0", "-top-12");
+    document
+      .getElementById("addbook")
+      .classList.add(
+        "inset-x-1/2",
+        "bottom-20",
+        "z-10",
+        "w-28",
+        "py-2",
+        "-ml-14"
+      );
+    document.getElementById("main-div").classList.add("h-80");
+  }
   let div = document.createElement("div");
   div.innerHTML = `<div class="fixed z-10 inset-0 overflow-y-auto hidden" id="addbookmodal">
   <div class="text-center">
@@ -33,7 +47,7 @@ export function addBook() {
       <form id="newbookform">
         <ul class="flex flex-wrap my-4 justify-between">
           <li class="flex flex-col w-5/12 my-4">
-            <span class="text-left">Name</span>
+            <cite class="text-left not-italic">Name</cite>
             <input
               type="text"
               placeholder="Enter a book name"
@@ -42,7 +56,7 @@ export function addBook() {
             />
           </li>
           <li class="flex flex-col w-5/12 my-4">
-            <span class="text-left">Genre</span>
+             <cite class="text-left not-italic">Genre</cite>
             <input
               type="text"
               placeholder="Enter genre"
@@ -51,7 +65,7 @@ export function addBook() {
             />
           </li>
           <li class="flex flex-col w-5/12 my-4">
-            <span class="text-left">Edition</span>
+             <cite class="text-left not-italic">Edition</cite>
             <input
               type="text"
               placeholder="Enter edition"
@@ -60,13 +74,14 @@ export function addBook() {
             />
           </li>
           <li class="flex flex-col w-5/12 my-4">
-            <span class="text-left">Author</span>
+            <cite class="text-left not-italic">Author</cite>
             <input
               type="text"
               placeholder="Enter author"
               class="border border-blue-300 p-2 rounded"
               name="author"
             />
+      
           </li>
         </ul>
         <div class="flex absolute right-4 bottom-4" id="cancel-add-btn-div">
@@ -107,20 +122,36 @@ export function addBook() {
         event.preventDefault();
         document.getElementById("addbookmodal").classList.add("hidden");
       });
+    //form validation
+    // Array.from(document.querySelectorAll("#newbookform input")).forEach(
+    //   (input) => {
+    //     input.classList.remove("border-blue-300");
+    //     input.classList.add("border-red-400");
+    //     const span = document.createElement("span");
+    //     span.classList.add("text-left", "text-red-500");
+    //     span.innerText = `Please enter ${input.name}`;
+    //     input.parentElement.append(span);
+    //   }
+    // );
+
     //get form data
     document.getElementById("newbookform").addEventListener("submit", (e) => {
       e.preventDefault();
+      const checkValidation = () => {
+        const formData = Array.from(
+          document.querySelectorAll("#newbookform input")
+        ).reduce(
+          (acc, cv) => ({
+            ...acc,
+            [cv.name]: cv.value,
+          }),
+          {}
+        );
+        return formData;
+      };
       div.querySelector("#cancel-add-btn-div").classList.add("hidden");
       div.querySelector("#addbook-loader-div").classList.remove("hidden");
-      var formData = Array.from(
-        document.querySelectorAll("#newbookform input")
-      ).reduce(
-        (acc, cv) => ({
-          ...acc,
-          [cv.name]: cv.value,
-        }),
-        {}
-      );
+      var formData = checkValidation();
       fetch(env.BASE_URL, {
         method: "POST",
         body: JSON.stringify(formData),
@@ -133,7 +164,11 @@ export function addBook() {
         })
         .then(function (data) {
           document.getElementById("addbookmodal").classList.add("hidden");
-          window.location.reload();
+          document.getElementById("notification").classList.remove("hidden");
+          setInterval(() => {
+            document.getElementById("notification").classList.add("hidden");
+            window.location.reload();
+          }, 1000);
         })
         .catch(function (err) {
           console.warn("Something went wrong.", err);
