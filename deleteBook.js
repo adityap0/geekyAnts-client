@@ -108,7 +108,9 @@ export function deleteBook(book) {
           .querySelector("#deletebook-loader-div")
           .querySelector("img")
           .classList.add("hidden");
-        console.warn("Something went wrong.", err);
+        setInterval(() => {
+          window.location.reload();
+        }, 1000);
       });
   });
 }

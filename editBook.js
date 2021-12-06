@@ -146,7 +146,16 @@ export function editBook(book) {
         window.location.reload();
       })
       .catch(function (err) {
-        console.warn("Something went wrong.", err);
+        div
+          .querySelector("#editbook-loader-div")
+          .querySelector("span").innerText = err;
+        div
+          .querySelector("#editbook-loader-div")
+          .querySelector("img")
+          .classList.add("hidden");
+        setInterval(() => {
+          window.location.reload();
+        }, 1000);
       });
   });
 }
