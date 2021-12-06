@@ -133,9 +133,6 @@ export function editBook(book) {
     );
     fetch(env.BASE_URL + `/${book._id}`, {
       method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-      },
       body: JSON.stringify(formData),
     })
       .then(function (response) {

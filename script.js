@@ -7,7 +7,10 @@ const env = {
 
 const getAllbooks = () => {
   document.querySelector("body").append(loader());
-  fetch(env.BASE_URL)
+  fetch(env.BASE_URL, {
+    mode: "cors",
+    headers: {},
+  })
     .then(function (response) {
       if (response.ok) {
         return response.json();
