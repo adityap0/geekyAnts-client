@@ -53,7 +53,9 @@ export function addBook(allBooks) {
               placeholder="Enter a book name"
               name="name"
               class="border border-blue-300 p-2 rounded"
+              id="name"
             />
+            <span class="text-left not-italic form-error text-red-500"></span>
           </li>
           <li class="flex flex-col w-5/12 my-4">
              <cite class="text-left not-italic">Genre</cite>
@@ -62,7 +64,9 @@ export function addBook(allBooks) {
               placeholder="Enter genre"
               class="border border-blue-300 p-2 rounded"
               name="genre"
+              id="genre"
             />
+            <span class="text-left not-italic form-error text-red-500"></span>
           </li>
           <li class="flex flex-col w-5/12 my-4">
              <cite class="text-left not-italic">Edition</cite>
@@ -71,7 +75,9 @@ export function addBook(allBooks) {
               placeholder="Enter edition"
               class="border border-blue-300 p-2 rounded"
               name="edition"
+              id="edition"
             />
+            <span class="text-left not-italic form-error text-red-500"></span>
           </li>
           <li class="flex flex-col w-5/12 my-4">
             <cite class="text-left not-italic">Author</cite>
@@ -80,8 +86,9 @@ export function addBook(allBooks) {
               placeholder="Enter author"
               class="border border-blue-300 p-2 rounded"
               name="author"
+              id="author"
             />
-      
+          <span class="text-left not-italic form-error text-red-500"></span>
           </li>
         </ul>
         <div class="flex absolute right-4 bottom-4" id="cancel-add-btn-div">
@@ -122,23 +129,44 @@ export function addBook(allBooks) {
         event.preventDefault();
         document.getElementById("addbookmodal").classList.add("hidden");
       });
-    //form validation
-    // Array.from(document.querySelectorAll("#newbookform input")).forEach(
-    //   (input) => {
-    //     input.classList.remove("border-blue-300");
-    //     input.classList.add("border-red-400");
-    //     const span = document.createElement("span");
-    //     span.classList.add("text-left", "text-red-500");
-    //     span.innerText = `Please enter ${input.name}`;
-    //     input.parentElement.append(span);
-    //   }
-    // );
 
-    //get form data
+    //Validation
+    const setError = (id, error, index) => {
+      document.querySelectorAll("cite")[index].classList.add("text-red-500");
+      document.getElementById(id).classList.remove("border-blue-300");
+      document.getElementById(id).classList.add("border-red-500");
+      document.getElementsByClassName("form-error")[index].innerHTML = error;
+    };
+    const removeError = (index, id) => {
+      document.querySelectorAll("cite")[index].classList.remove("text-red-500");
+      document.getElementsByClassName("form-error")[index].innerHTML = "";
+      document.getElementById(id).classList.remove("border-red-500");
+      document.getElementById(id).classList.add("border-blue-300");
+    };
+    const validateForm = () => {
+      var returnVal = true;
+      var name = document.getElementById("newbookform")["name"];
+      var genre = document.getElementById("newbookform")["genre"];
+      var edition = document.getElementById("newbookform")["edition"];
+      var author = document.getElementById("newbookform")["author"];
+      [name, genre, edition, author].forEach((item, id) => {
+        if (item.value.length > 0) {
+          removeError(id, `${item.id}`);
+        }
+        if (item.value === "") {
+          setError(`${item.id}`, `Please Enter ${item.id}`, id);
+          returnVal = false;
+        }
+      });
+      return returnVal;
+    };
+    //Post data
     document.getElementById("newbookform").addEventListener("submit", (e) => {
       e.preventDefault();
-      const checkValidation = () => {
-        const formData = Array.from(
+      if (validateForm()) {
+        div.querySelector("#cancel-add-btn-div").classList.add("hidden");
+        div.querySelector("#addbook-loader-div").classList.remove("hidden");
+        var formData = Array.from(
           document.querySelectorAll("#newbookform input")
         ).reduce(
           (acc, cv) => ({
@@ -147,32 +175,28 @@ export function addBook(allBooks) {
           }),
           {}
         );
-        return formData;
-      };
-      div.querySelector("#cancel-add-btn-div").classList.add("hidden");
-      div.querySelector("#addbook-loader-div").classList.remove("hidden");
-      var formData = checkValidation();
-      fetch(env.BASE_URL, {
-        method: "POST",
-        body: JSON.stringify(formData),
-      })
-        .then(function (response) {
-          if (response.ok) {
-            return response.json();
-          }
-          return Promise.reject(response);
+        fetch(env.BASE_URL, {
+          method: "POST",
+          body: JSON.stringify(formData),
         })
-        .then(function (data) {
-          document.getElementById("addbookmodal").classList.add("hidden");
-          document.getElementById("notification").classList.remove("hidden");
-          setInterval(() => {
-            document.getElementById("notification").classList.add("hidden");
-            window.location.reload();
-          }, 1000);
-        })
-        .catch(function (err) {
-          console.warn("Something went wrong.", err);
-        });
+          .then(function (response) {
+            if (response.ok) {
+              return response.json();
+            }
+            return Promise.reject(response);
+          })
+          .then(function (data) {
+            document.getElementById("addbookmodal").classList.add("hidden");
+            document.getElementById("notification").classList.remove("hidden");
+            setInterval(() => {
+              document.getElementById("notification").classList.add("hidden");
+              window.location.reload();
+            }, 1000);
+          })
+          .catch(function (err) {
+            console.warn("Something went wrong.", err);
+          });
+      }
     });
   });
 }

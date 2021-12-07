@@ -41,44 +41,52 @@ export function editBook(book) {
       <form id="editbookform">
         <ul class="flex flex-wrap my-4 justify-between">
           <li class="flex flex-col w-5/12 my-4">
-            <span class="text-left">Name</span>
+           <cite class="text-left not-italic">Name</cite>
             <input
               type="text"
-              placeholder="Enter a book name"
+              placeholder="Enter name"
+              class="border border-blue-300 p-2 rounded"
               name="name"
-              class="border border-blue-300 p-2 rounded text-blue-300"
+              id="name"
               value="${book.name}"
             />
+          <span class="text-left not-italic form-error text-red-500"></span>
           </li>
           <li class="flex flex-col w-5/12 my-4">
-            <span class="text-left">Genre</span>
+           <cite class="text-left not-italic">Genre</cite>
             <input
               type="text"
               placeholder="Enter genre"
-              class="border border-blue-300 p-2 rounded text-blue-300"
+              class="border border-blue-300 p-2 rounded"
               name="genre"
+              id="genre"
               value="${book.genre}"
             />
+          <span class="text-left not-italic form-error text-red-500"></span>
           </li>
           <li class="flex flex-col w-5/12 my-4">
-            <span class="text-left">Edition</span>
+            <cite class="text-left not-italic">Edition</cite>
             <input
               type="text"
               placeholder="Enter edition"
-              class="border border-blue-300 p-2 rounded text-blue-300"
+              class="border border-blue-300 p-2 rounded"
               name="edition"
+              id="edition"
               value="${book.edition}"
             />
+          <span class="text-left not-italic form-error text-red-500"></span>
           </li>
           <li class="flex flex-col w-5/12 my-4">
-            <span class="text-left">Author</span>
+            <cite class="text-left not-italic">Author</cite>
             <input
               type="text"
               placeholder="Enter author"
-              class="border border-blue-300 p-2 rounded text-blue-300"
+              class="border border-blue-300 p-2 rounded"
               name="author"
+              id="author"
               value="${book.author}"
             />
+          <span class="text-left not-italic form-error text-red-500"></span>
           </li>
         </ul>
         <div class="flex absolute right-4 bottom-4" id="cancel-save-div">
@@ -118,49 +126,80 @@ export function editBook(book) {
       document.getElementById("editbookmodal").classList.add("hidden");
     });
   //get form data on 'save'
+  const setError = (id, error, index) => {
+    div.querySelectorAll("cite")[index].classList.add("text-red-500");
+    div.querySelector(`#${id}`).classList.remove("border-blue-300");
+    div.querySelector(`#${id}`).classList.add("border-red-500");
+    div.querySelectorAll(".form-error")[index].innerHTML = error;
+  };
+  const removeError = (index, id) => {
+    div.querySelectorAll("cite")[index].classList.remove("text-red-500");
+    div.querySelectorAll(".form-error")[index].innerHTML = "";
+    div.querySelector(`#${id}`).classList.remove("border-red-500");
+    div.querySelector(`#${id}`).classList.add("border-blue-300");
+  };
+  const validateForm = () => {
+    var returnVal = true;
+    var name = document.getElementById("editbookform")["name"];
+    var genre = document.getElementById("editbookform")["genre"];
+    var edition = document.getElementById("editbookform")["edition"];
+    var author = document.getElementById("editbookform")["author"];
+    [name, genre, edition, author].forEach((item, id) => {
+      if (item.value === "") {
+        setError(`${item.id}`, `Please Enter ${item.id}`, id);
+        returnVal = false;
+      }
+      if (item.value.length > 0) {
+        removeError(id, `${item.id}`);
+      }
+    });
+    return returnVal;
+  };
   div.querySelector("#save").addEventListener("click", (e) => {
     e.preventDefault();
-    div.querySelector("#cancel-save-div").classList.add("hidden");
-    div.querySelector("#editbook-loader-div").classList.remove("hidden");
-    var formData = Array.from(
-      document.querySelectorAll("#editbookform input")
-    ).reduce(
-      (acc, cv) => ({
-        ...acc,
-        [cv.name]: cv.value,
-      }),
-      {}
-    );
-    fetch(env.BASE_URL + `/${book._id}`, {
-      method: "PUT",
-      body: JSON.stringify(formData),
-    })
-      .then(function (response) {
-        if (response.ok) {
-          return response.json();
-        }
-        return Promise.reject(response);
+    if (validateForm()) {
+      div.querySelector("#cancel-save-div").classList.add("hidden");
+      div.querySelector("#editbook-loader-div").classList.remove("hidden");
+      var formData = Array.from(
+        document.querySelectorAll("#editbookform input")
+      ).reduce(
+        (acc, cv) => ({
+          ...acc,
+          [cv.name]: cv.value,
+        }),
+        {}
+      );
+      fetch(env.BASE_URL + `/${book._id}`, {
+        method: "PUT",
+        body: JSON.stringify(formData),
       })
-      .then(function (data) {
-        div.querySelector("#editbookmodal").classList.add("hidden");
-        document.getElementById("notification").innerText = "Changes Saved!";
-        document.getElementById("notification").classList.remove("hidden");
-        setInterval(() => {
-          document.getElementById("notification").classList.add("hidden");
-          window.location.reload();
-        }, 1000);
-      })
-      .catch(function (err) {
-        div
-          .querySelector("#editbook-loader-div")
-          .querySelector("span").innerText = err;
-        div
-          .querySelector("#editbook-loader-div")
-          .querySelector("img")
-          .classList.add("hidden");
-        setInterval(() => {
-          window.location.reload();
-        }, 1000);
-      });
+        .then(function (response) {
+          if (response.ok) {
+            return response.json();
+          }
+          return Promise.reject(response);
+        })
+        .then(function (data) {
+          div.querySelector("#editbookmodal").classList.add("hidden");
+          document.getElementById("notification").innerText = "Changes Saved!";
+          document.getElementById("notification").classList.remove("hidden");
+          setInterval(() => {
+            document.getElementById("notification").classList.add("hidden");
+            window.location.reload();
+          }, 1000);
+        })
+        .catch(function (err) {
+          div
+            .querySelector("#editbook-loader-div")
+            .querySelector("span").innerText = err;
+          div
+            .querySelector("#editbook-loader-div")
+            .querySelector("img")
+            .classList.add("hidden");
+          setInterval(() => {
+            window.location.reload();
+          }, 1000);
+        });
+    }
   });
 }
